@@ -22,28 +22,18 @@ const mapArrayToHashByKey = (data, key) => {
 
   if (data[0][key] !== undefined)
     for (el of data) {
+      const strKey = typeof el[key] === 'object' ? JSON.stringify(el[key]) : String(el[key])
 
-      if (typeof el[key] === 'object') {
-        if (typeof result[JSON.stringify(el[key])] !== "undefined") {
-          if (Array.isArray(result[JSON.stringify(el[key])]))
-            result[JSON.stringify(el[key])].push(el);
-          else
-            result[JSON.stringify(el[key])] = [result[JSON.stringify(el[key])], el];
-
-        } else {
-          result[JSON.stringify(el[key])] = el;
-        }
+      if (typeof result[strKey] !== "undefined") {
+        if (Array.isArray(result[strKey]))
+          result[strKey].push(el);
+        else
+          result[strKey] = [result[strKey], el];
       } else {
-        if (typeof result[JSON.stringify(el[key])] !== "undefined") {
-          if (Array.isArray(result[String(el[key])]))
-            result[String(el[key])].push(el);
-          else
-            result[String(el[key])] = [result[String(el[key])], el];
-        } else {
-          result[String(el[key])] = el;
-        }
+        result[strKey] = el;
       }
-      if (result[`_${key}s`].indexOf(el[key]) === -1) result[`_${key}s`].push(el[key]);
+
+      if (result[`_${key}s`].indexOf(strKey) === -1) result[`_${key}s`].push(strKey);
     }
 
   return result;
@@ -83,7 +73,7 @@ const data = [
   },
 ];
 
-const hash = mapArrayToHashByKey(data, "address");
+const hash = mapArrayToHashByKey(data, "age");
 console.log(hash);
 /*
   Пример результата функции:
