@@ -20,16 +20,32 @@ const mapArrayToHashByKey = (data, key) => {
   const result = {};
   result[`_${key}s`] = [];
 
-  if(data[0][key] !== undefined)
-    for(el of data){
-      if (typeof el[key] === 'object')
-        result[JSON.stringify(el[key])] = el;
-      else
-        result[String(el[key])] = el;
-      result[`_${key}s`].push(el[key]);
+  if (data[0][key] !== undefined)
+    for (el of data) {
+
+      if (typeof el[key] === 'object') {
+        if (typeof result[JSON.stringify(el[key])] !== "undefined") {
+          if (Array.isArray(result[JSON.stringify(el[key])]))
+            result[JSON.stringify(el[key])].push(el);
+          else
+            result[JSON.stringify(el[key])] = [result[JSON.stringify(el[key])], el];
+
+        } else {
+          result[JSON.stringify(el[key])] = el;
+        }
+      } else {
+        if (typeof result[JSON.stringify(el[key])] !== "undefined") {
+          if (Array.isArray(result[String(el[key])]))
+            result[String(el[key])].push(el);
+          else
+            result[String(el[key])] = [result[String(el[key])], el];
+        } else {
+          result[String(el[key])] = el;
+        }
+      }
+      if (result[`_${key}s`].indexOf(el[key]) === -1) result[`_${key}s`].push(el[key]);
     }
-  
-  console.log(result);
+
   return result;
 }
 
@@ -55,10 +71,20 @@ const data = [
     name: "Jane",
     surname: "Smith",
   },
+  {
+    id: 3,
+    age: 30,
+    address: {
+      city: "Los Angeles",
+      zipCode: 90001,
+    },
+    name: "Nnn",
+    surname: "asd",
+  },
 ];
 
-const hash = mapArrayToHashByKey(data, "name");
-
+const hash = mapArrayToHashByKey(data, "address");
+console.log(hash);
 /*
   Пример результата функции:
 
